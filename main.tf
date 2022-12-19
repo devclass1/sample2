@@ -17,6 +17,24 @@ provider "azurerm" {
 #Create Resource - Resource Group
 
 resource "azurerm_resource_group" "rg" {
-  name     = "myTFResourceGroup"
+  name     = "myClassRG"
   location = "eastus2"
+}
+
+#Create a Storage Account
+
+resource "azurerm_storage_account" "rg" {
+  name                     = "aemlabstorage1"
+  resource_group_name      = azurerm_resource_group.rg.name
+  location                 = azurerm_resource_group.rg.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+}
+
+#Create a Container within newly created storage account
+
+resource "azurerm_storage_container" "rg" {
+  name                  = "data"
+  storage_account_name  = azurerm_storage_account.rg.name
+  container_access_type = "private"
 }

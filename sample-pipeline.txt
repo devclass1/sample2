@@ -1,0 +1,39 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Clone GitHub Repo') {
+            steps {
+                echo 'Clone GitHub Repo'
+                git branch: 'main', url: 'https://github.com/devclass1/sample2.git'
+            }
+        }
+		stage('Check Files') {
+            steps {
+                sh '''
+                echo "Check files"
+                ls -l /var/lib/jenkins/workspace/pipelineproject/
+                
+                '''
+            }
+        }
+		stage('Install Apache2 App server') {
+            steps {
+               sh '''
+                sudo apt install apache2 -y
+                sudo systemctl start apache2
+                sudo systemctl enable apache2
+               
+               '''
+            }
+        }
+		stage('Copy index into app directory') {
+            steps {
+                sh '''
+                sudo chown -Rv jenkins:www-data /var/www/html
+                cp /var/lib/jenkins/workspace/pipelineproject/index.html /var/www/html/
+                '''
+            }
+        }
+    }
+}
